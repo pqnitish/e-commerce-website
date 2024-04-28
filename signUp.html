@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>SignUp Page</h2>
+    <form>
+      <input placeholder="Enter userName" type="text" id="name" />
+      <input placeholder="Enter Email" type="email" id="email" />
+      <input placeholder="Enter password" type="password" id="password" />
+      <button type="submit">SignUp</button>
+    </form>
+  </body>
+  <script>
+    let form = document.querySelector("form");
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      let formValue = event.target;
+      // console.log(formValue);
+      let name = formValue[0].value;
+      let email = formValue[1].value;
+      let password = formValue[2].value;
+      //console.log(userName,email,password);
+      let user = {
+        name,
+        email,
+        password,
+      };
+      console.log(user);
+      fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+      alert(" User registered successfully please login....");
+      window.location.href ="signIn.html";
+    }
+    form.addEventListener("submit", function (e) {
+      handleFormSubmit(e);
+    });
+  </script>
+</html>

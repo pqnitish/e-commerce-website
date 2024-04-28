@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products</title>
+    <style>
+      #container {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        flex-wrap: wrap;
+      }
+      #s-cont {
+        width: 20%;
+
+        text-align: center;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      }
+      #s-cont > img {
+        width: 160px;
+      }
+    </style>
+  </head>
+  <body>
+    <h5>Welcone to Products...</h5>
+    <h4 id="name"></h4>
+    <button id="addProdBtn">ADD PRODUCT PAGE</button>
+
+    <div id="container"></div>
+  </body>
+  <script>
+    let loginUser = JSON.parse(localStorage.getItem("loginUser"));
+    document.getElementById("name").textContent = `Welcome ${loginUser.name}`;
+
+    let btn = document.getElementById("addProdBtn");
+    let cont = document.getElementById("container");
+    async function getData(URL) {
+      let res = await fetch(URL);
+      let data = await res.json();
+      showData(data);
+    }
+    function showData(arr) {
+      arr.forEach(function (ele, i) {
+        let div = document.createElement("div");
+        div.id = "s-cont";
+        let title = document.createElement("h3");
+        title.innerHTML = `Title: ${ele.title}`;
+        let price = document.createElement("p");
+        price.innerHTML = `Price:${ele.price}`;
+        let rating = document.createElement("p");
+        rating.innerHTML = ` Ratings:${ele.ratings}`;
+        let addBtn = document.createElement("button");
+        addBtn.textContent = "Add to Cart";
+        addBtn.addEventListener("click", function () {
+          addToCart(ele, i);
+        });
+        let delBtn = document.createElement("button");
+        delBtn.textContent = "delete";
+        delBtn.addEventListener("click", function () {
+          deleteItem();
+        });
+        let img = document.createElement("img");
+        img.src = ele.src;
+        div.append(img, title, price, rating, delBtn, addBtn);
+        cont.append(div);
+      });
+    }
+    btn.addEventListener("click", function () {
+      window.location.href = "addProduct.html";
+    });
+    async function addToCart(ele, i) {
+      let res = await fetch("http://localhost:3000/allUsersCart");
+      let data = await res.json();
+      //console.log(data);
+      data[loginUser.name].push(ele);
+      fetch("http://localhost:3000/allUsersCart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then(()=>{
+        console.log("product added to cart");
+      }).catch((err)=>{
+        console.log("err",err);
+      });
+     
+    }
+  </script>
+</html>
